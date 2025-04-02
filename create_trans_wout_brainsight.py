@@ -125,7 +125,7 @@ def main():
     default_fid_file=subj_fs_dir / 'bem' / f"{fs_subj}-fiducials.fif"
     
     
-    #Select one ds folder to make the trans from — we don't have Brainisght coordinates so it doesn't matter which run
+    #Select one ds folder to make the trans from — we don't have Brainsight coordinates so it doesn't matter which run
     ds_folders=os.listdir(subj_source_meg_dir)
     example_ds=os.path.join(subj_source_meg_dir, ds_folders[0])
     create_null_tag_file()
