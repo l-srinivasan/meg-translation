@@ -22,6 +22,77 @@ import warnings
 warnings.filterwarnings(action='ignore', category=FutureWarning)
 
 
+def create_null_tag_file():
+    """
+    
+    Create an empty null.tag file which facilitates tagset labeling
+    
+    Returns
+    -------
+    None.
+
+    """
+    
+    fids = ["'Nasion'", "'Left Ear'", "'Right Ear'"]
+    with open("null.tag", "w") as f:
+        for fid in fids:
+            f.write(fid + " 0 0 0\n")
+            
+  
+def convert_anat(fs_subj):
+    """
+    
+    Convert anatomical t1w from nifti to HEAD/BRIK format
+
+    Parameters
+    ----------
+    fs_subj : str
+        FreeSurfer subject name.
+
+    Returns
+    -------
+    None.
+
+    """
+    nii_mri_file = f'{fs_subj}_rec-axialized_T1w.nii.gz'
+    mri_file_stem = 't1+orig'
+    copy_cmd = shlex.split(f"3dcopy {nii_mri_file} {mri_file_stem}.")
+    subprocess.run(copy_cmd)
+    
+    
+def view_afni(
+    message="Press return when finished", underlay=None, overlay=None, plugout=False
+):
+
+    plugout_str1, plugout_str2 = "", ""
+    if plugout:
+        plugout_str1 = " -yesplugouts"
+        plugout_str2 = " -com 'OPEN_WINDOW A.plugin.Edit_Tagset'"
+    underlay_str = ""
+    if underlay:
+        underlay_str = f" -com 'SWITCH_UNDERLAY {underlay}'"
+    overlay_str = ""
+    if overlay:
+        overlay_str = f" -com 'SWITCH_OVERLAY {overlay}'"
+
+    cmd = shlex.split(f"afni{plugout_str1}{underlay_str}{overlay_str}{plugout_str2}")
+    print(cmd)
+    subprocess.call(cmd)
+    sleep(5)
+    user_input = input(f"{message}")
+
+    return user_input
+
+
+def check_failure(
+    err, errors=["N", "'N'", "n", "'n'"], message="++ Tagset marked as bad. Skipping ++"
+):
+
+    if err in errors:
+        print(message)
+        sys.exit(1)
+        
+        
 def main():
     
     
@@ -110,77 +181,6 @@ def main():
     #Remove defaults
     os.remove(default_trans_file)
     os.remove(default_fid_file)
-    
-    
-def create_null_tag_file():
-    """
-    
-    Create an empty null.tag file which facilitates tagset labeling
-    
-    Returns
-    -------
-    None.
-
-    """
-    
-    fids = ["'Nasion'", "'Left Ear'", "'Right Ear'"]
-    with open("null.tag", "w") as f:
-        for fid in fids:
-            f.write(fid + " 0 0 0\n")
-            
-  
-def convert_anat(fs_subj):
-    """
-    
-    Convert anatomical t1w from nifti to HEAD/BRIK format
-
-    Parameters
-    ----------
-    fs_subj : str
-        FreeSurfer subject name.
-
-    Returns
-    -------
-    None.
-
-    """
-    nii_mri_file = f'{fs_subj}_rec-axialized_T1w.nii.gz'
-    mri_file_stem = 't1+orig'
-    copy_cmd = shlex.split(f"3dcopy {nii_mri_file} {mri_file_stem}.")
-    subprocess.run(copy_cmd)
-    
-    
-def view_afni(
-    message="Press return when finished", underlay=None, overlay=None, plugout=False
-):
-
-    plugout_str1, plugout_str2 = "", ""
-    if plugout:
-        plugout_str1 = " -yesplugouts"
-        plugout_str2 = " -com 'OPEN_WINDOW A.plugin.Edit_Tagset'"
-    underlay_str = ""
-    if underlay:
-        underlay_str = f" -com 'SWITCH_UNDERLAY {underlay}'"
-    overlay_str = ""
-    if overlay:
-        overlay_str = f" -com 'SWITCH_OVERLAY {overlay}'"
-
-    cmd = shlex.split(f"afni{plugout_str1}{underlay_str}{overlay_str}{plugout_str2}")
-    print(cmd)
-    subprocess.call(cmd)
-    sleep(5)
-    user_input = input(f"{message}")
-
-    return user_input
-
-
-def check_failure(
-    err, errors=["N", "'N'", "n", "'n'"], message="++ Tagset marked as bad. Skipping ++"
-):
-
-    if err in errors:
-        print(message)
-        sys.exit(1)
             
             
 if __name__ == "__main__":
