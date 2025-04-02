@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Apr 2 10:32:58 2025
-@author: Leela Srinivasan
+@authors: Leela Srinivasan, Elena Hayday
 
 Create run-specific transformation + fiducial files in the abscence of Brainsight and the Exported_Electrodes.txt coordinates
 Manually mark the fiducial locations on AFNI
