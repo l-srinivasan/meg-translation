@@ -12,13 +12,18 @@ import sys
 import mne
 import numpy as np
 
-pnum_subj=sys.argv[1]
-dspm_run_dir=sys.argv[2]
-mri_subj_dir=sys.argv[3]
-parcellation_type=sys.argv[4]
+def main():
+    
+    pnum_subj=sys.argv[1]
+    dspm_run_dir=sys.argv[2]
+    mri_subj_dir=sys.argv[3]
+    parcellation_type=sys.argv[4]
+    
+    for hemi in ['lh', 'rh']:
+        create_parcel_vertex_map(pnum_subj, dspm_run_dir, mri_subj_dir, parcellation_type)
 
+def create_parcel_vertex_map():
 
-for hemi in ['lh', 'rh']:
     fname = os.path.join(dspm_run_dir, 'full-stcs-{}.stc'.format(hemi))
     stc=mne.read_source_estimate(fname)
     
@@ -34,3 +39,7 @@ for hemi in ['lh', 'rh']:
         
     # Save hemispheric dictionary mapping to dSPM folder
     np.save(os.path.join(dspm_run_dir, "{}_parcel_vertex_mapping.npy".format(hemi)), parcel_vertex_mapping)
+
+
+if __name__ == "__main__":
+    main()
